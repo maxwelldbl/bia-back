@@ -167,7 +167,7 @@ class GetPersonaJuridica(generics.ListAPIView):
 
 
 @api_view(['GET'])
-def getPersonaByEmail(pk):
+def getPersonaByEmail(request,pk):
     try:
         persona = Personas.objects.get(email=pk)
         serializer = PersonasSerializer(persona, many=False)
