@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-#i9hilnt48#&)x)gt@q-#x9-x82di)l+*2mk1t-#8nb520v!s$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'web-production-e5dc.up.railway.app', 'backend-bia-production.up.railway.app', 'backend-bia-production-933f.up.railway.app', 'web-production-3f60.up.railway.app','web-production-4514.up.railway.app']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'web-production-e5dc.up.railway.app', 'backend-bia-production.up.railway.app', 'backend-bia-production-933f.up.railway.app', 'web-production-3f60.up.railway.app',]
 
 
 # Application definition
@@ -209,8 +209,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.outlook.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER='isamcbiacormacarena@outlook.com'
-EMAIL_HOST_PASSWORD='Isamcbia123'
+EMAIL_HOST_USER='bia-bia-cormacarena@outlook.com'
+EMAIL_HOST_PASSWORD='Isamc1234'
 
 # Send SMS with Twilio
 # https://www.twilio.com/blog/verify-phone-numbers-django-twilio-verify
@@ -220,6 +220,7 @@ TWILIO_VERIFY_SERVICE_SID=os.environ.get('TWILIO_VERIFY_SERVICE_SID')
 TWILIO_ACCOUNT_SID=os.environ.get('TWILIO_ACCOUNT_SID')
 TWILIO_AUTH_TOKEN=os.environ.get('TWILIO_AUTH_TOKEN')
 PHONE_NUMBER=os.environ.get('PHONE_NUMBER')
+AUTHENTICATION_360_NRS = os.environ.get('AUTHENTICATION_360_NRS')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

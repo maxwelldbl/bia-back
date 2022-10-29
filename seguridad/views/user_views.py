@@ -86,31 +86,21 @@ class UpdateUserProfileInterno(generics.RetrieveUpdateAPIView):
             
             # AUDITORIA AL ACTUALIZAR USUARIO PROPIO
             
-            usuario = User.objects.get(id_usuario = request.user.id_usuario)
-            modulo = Modulos.objects.get(id_modulo = 3)
-            permiso = Permisos.objects.get(cod_permiso = 'AC')
             dirip = Util.get_client_ip(request)
-            descripcion =   "idUsuario:" + str(user_loggedin) + ";" + "nombreUsuario:" + str(user.nombre_de_usuario) + "."
-            valores_actualizados = ""
-                
-            del previous_user.__dict__["_state"]
-            del previous_user.__dict__["_django_version"]
+            descripcion = {'nombre_de_usuario': user.nombre_de_usuario}
+            valores_actualizados = {'current': user, 'previous': previous_user}
             
-            for field, value in previous_user.__dict__.items():
-                new_value = getattr(user,field)
-                if value != new_value:
-                    valores_actualizados += field + "_anterior:" + str(value) + ";" + field + "_nuevo:" + str(new_value) + ";"
+            auditoria_data = {
+                'id_usuario': user_loggedin,
+                'id_modulo': 3,
+                'cod_permiso': 'AC',
+                'subsistema': 'SEGU',
+                'dirip': dirip,
+                'descripcion': descripcion,
+                'valores_actualizados': valores_actualizados
+            }
             
-            auditoria_user = Auditorias.objects.create(
-                id_usuario = usuario,
-                id_modulo = modulo,
-                id_cod_permiso_accion = permiso,
-                subsistema = "SEGU",
-                dirip = dirip,
-                descripcion = descripcion,
-                valores_actualizados = valores_actualizados
-            )
-            auditoria_user.save()
+            Util.save_auditoria(auditoria_data)
             
             return Response({'success': True,'data': user_serializer.data})
         
@@ -123,7 +113,7 @@ class UpdateUserProfileExterno(generics.RetrieveUpdateAPIView):
     
     def patch(self, request):
         user_loggedin = self.request.user.id_usuario
-        user = User.objects.filter(id_usuario = self.request.user.id_usuario).first()
+        user = User.objects.filter(id_usuario = user_loggedin).first()
         previous_user = copy.copy(user)
         if user:
             user_serializer = self.serializer_class(user, data=request.data)
@@ -132,31 +122,21 @@ class UpdateUserProfileExterno(generics.RetrieveUpdateAPIView):
             
             # AUDITORIA AL ACTUALIZAR USUARIO PROPIO
             
-            usuario = User.objects.get(id_usuario = request.user.id_usuario)
-            modulo = Modulos.objects.get(id_modulo = 4)
-            permiso = Permisos.objects.get(cod_permiso = 'AC')
             dirip = Util.get_client_ip(request)
-            descripcion =   "idUsuario:" + str(user_loggedin) + ";" + "nombreUsuario:" + str(user.nombre_de_usuario) + "."
-            valores_actualizados = ""
-                
-            del previous_user.__dict__["_state"]
-            del previous_user.__dict__["_django_version"]
+            descripcion = {'nombre_de_usuario': user.nombre_de_usuario}
+            valores_actualizados = {'current': user, 'previous': previous_user}
             
-            for field, value in previous_user.__dict__.items():
-                new_value = getattr(user,field)
-                if value != new_value:
-                    valores_actualizados += field + "_anterior:" + str(value) + ";" + field + "_nuevo:" + str(new_value) + ";"
+            auditoria_data = {
+                'id_usuario': user_loggedin,
+                'id_modulo': 4,
+                'cod_permiso': 'AC',
+                'subsistema': 'SEGU',
+                'dirip': dirip,
+                'descripcion': descripcion,
+                'valores_actualizados': valores_actualizados
+            }
             
-            auditoria_user = Auditorias.objects.create(
-                id_usuario = usuario,
-                id_modulo = modulo,
-                id_cod_permiso_accion = permiso,
-                subsistema = "SEGU",
-                dirip = dirip,
-                descripcion = descripcion,
-                valores_actualizados = valores_actualizados
-            )
-            auditoria_user.save()
+            Util.save_auditoria(auditoria_data)
             
             return Response({'success': True,'data': user_serializer.data})
 
@@ -178,32 +158,22 @@ class UpdateUser(generics.RetrieveUpdateAPIView):
                 user_serializer.save()
                 
                 # AUDITORIA AL ACTUALIZAR USUARIO
-                
-                usuario = User.objects.get(id_usuario = user_loggedin)
-                modulo = Modulos.objects.get(id_modulo = 2)
-                permiso = Permisos.objects.get(cod_permiso = 'AC')
+            
                 dirip = Util.get_client_ip(request)
-                descripcion =   "idUsuario:" + str(user_loggedin) + ";" + "nombreUsuario:" + str(user.nombre_de_usuario) + "."
-                valores_actualizados = ""
+                descripcion = {'nombre_de_usuario': user.nombre_de_usuario}
+                valores_actualizados = {'current': user, 'previous': previous_user}
                 
-                del previous_user.__dict__["_state"]
-                del previous_user.__dict__["_django_version"]
+                auditoria_data = {
+                    'id_usuario': user_loggedin,
+                    'id_modulo': 2,
+                    'cod_permiso': 'AC',
+                    'subsistema': 'SEGU',
+                    'dirip': dirip,
+                    'descripcion': descripcion,
+                    'valores_actualizados': valores_actualizados
+                }
                 
-                for field, value in previous_user.__dict__.items():
-                    new_value = getattr(user,field)
-                    if value != new_value:
-                        valores_actualizados += field + "_anterior:" + str(value) + ";" + field + "_nuevo:" + str(new_value) + ";"
-                    
-                auditoria_user = Auditorias.objects.create(
-                    id_usuario = usuario,
-                    id_modulo = modulo,
-                    id_cod_permiso_accion = permiso,
-                    subsistema = "SEGU",
-                    dirip = dirip,
-                    descripcion = descripcion,
-                    valores_actualizados = valores_actualizados
-                )
-                auditoria_user.save()
+                Util.save_auditoria(auditoria_data)
                 
                 return Response({'success': True,'data': user_serializer.data})
             else:
@@ -262,6 +232,7 @@ class GetUserByPersonDocument(generics.ListAPIView):
                 return Response({'Persona': serializador.data})
         except:
             return Response({'data': 'No se encuentra persona con este numero de documento'})
+   
         
     
 @api_view(['PUT'])
@@ -315,34 +286,29 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated, PermisoCrearUsuarios]
 
     def post(self, request):
+        user_loggedin = request.user.id_usuario
         user = request.data
         serializer = self.serializer_class(data=user)
         serializer.is_valid(raise_exception=True)
-        serializer_response = serializer.save()
+        serializer.save()
         
         user_data = serializer.data
         
         # AUDITORIA AL REGISTRAR USUARIO
-        
-        usuario = User.objects.get(id_usuario = request.user.id_usuario)
-        modulo = Modulos.objects.get(id_modulo = 2)
-        permiso = Permisos.objects.get(cod_permiso = 'CR')
+            
         dirip = Util.get_client_ip(request)
+        descripcion = {'nombre_de_usuario': request.user.nombre_de_usuario}
         
-        currentdate = datetime.date.today()
-        formatDate = currentdate.strftime("%d/%m/%y")
+        auditoria_data = {
+            'id_usuario': user_loggedin,
+            'id_modulo': 2,
+            'cod_permiso': 'CR',
+            'subsistema': 'SEGU',
+            'dirip': dirip,
+            'descripcion': descripcion
+        }
         
-        descripcion = "idUsuario:" + str(serializer_response.pk) + ";" + "fecha:" + formatDate + ";" + "observaciones:Registro de otro usuario" + ";" + "nombreUsuario:"+ serializer_response.nombre_de_usuario + "."
-        
-        auditoria_user = Auditorias.objects.create(
-            id_usuario = usuario,
-            id_modulo = modulo,
-            id_cod_permiso_accion = permiso,
-            subsistema = "SEGU",
-            dirip = dirip,
-            descripcion = descripcion
-        )
-        auditoria_user.save()
+        Util.save_auditoria(auditoria_data)
         
         user = User.objects.get(email=user_data['email'])
 
@@ -358,7 +324,7 @@ class RegisterView(generics.CreateAPIView):
         short_url = Util.get_short_url(request, absurl)
         
         if user.persona.tipo_persona == 'N':
-            sms = 'Hola '+ user.persona.primer_nombre + ' ' + user.persona.primer_apellido + ' utiliza el siguiente link para verificar tu usuario \n' + short_url
+            sms = 'Verifica tu usuario de Cormarena-Bia aqui: ' + short_url
             context = {'primer_nombre': user.persona.primer_nombre, 'primer_apellido': user.persona.primer_apellido, 'absurl': absurl}
             template = render_to_string(('email-verification.html'), context)
             subject = 'Verifica tu usuario ' + user.persona.primer_nombre
@@ -374,7 +340,7 @@ class RegisterView(generics.CreateAPIView):
             return Response(user_data, status=status.HTTP_201_CREATED)
 
         else:
-            sms = 'Hola '+ user.persona.razon_social + ' utiliza el siguiente link para verificar tu usuario \n' + short_url
+            sms = 'Verifica tu usuario de Cormarena-Bia aqui: ' + short_url
             context = {'razon_social': user.persona.razon_social, 'absurl': absurl}
             template = render_to_string(('email-verification.html'), context)
             subject = 'Verifica tu usuario ' + user.persona.razon_social
@@ -414,7 +380,7 @@ class RegisterExternoView(generics.CreateAPIView):
         short_url = Util.get_short_url(request, absurl)
         
         if user.persona.tipo_persona == 'N':
-            sms = 'Hola '+ user.persona.primer_nombre + ' ' + user.persona.primer_apellido + ' utiliza el siguiente link para verificar tu usuario \n' + short_url
+            sms = 'Verifica tu usuario de Cormarena-Bia aqui: ' + short_url
             context = {'primer_nombre': user.persona.primer_nombre, 'primer_apellido': user.persona.primer_apellido, 'absurl': absurl}
             template = render_to_string(('email-verification.html'), context)
             subject = 'Verifica tu usuario ' + user.persona.primer_nombre
@@ -430,7 +396,7 @@ class RegisterExternoView(generics.CreateAPIView):
             return Response(user_data, status=status.HTTP_201_CREATED)
 
         else:
-            sms = 'Hola '+ user.persona.razon_social + ' utiliza el siguiente link para verificar tu usuario \n' + short_url
+            sms = 'Verifica tu usuario de Cormarena-Bia aqui: ' + short_url
             context = {'razon_social': user.persona.razon_social, 'absurl': absurl}
             template = render_to_string(('email-verification.html'), context)
             subject = 'Verifica tu usuario ' + user.persona.razon_social
@@ -546,8 +512,7 @@ class LoginApiView(generics.CreateAPIView):
                                 user.save()   
 
                                 if user.persona.tipo_persona == 'N':
-                                    sms = 'Hola ' + user.persona.primer_nombre + ' Tu usuario ha sido bloqueado ya que alcanzó el limite de intentos \
-                                        para ingresar a Bia Cormacarena, desbloquealo enviando un correo a admin@admin.com'
+                                    sms = 'Usuario Cormacarena Bia bloqueado por limite de intentos, desbloquealo enviando un correo a admin@admin.com'
                                     context = {'primer_nombre': user.persona.primer_nombre}
                                     template = render_to_string(('email-blocked-user.html'), context)
                                     subject = 'Bloqueo de cuenta ' + user.persona.primer_nombre
@@ -562,8 +527,7 @@ class LoginApiView(generics.CreateAPIView):
                                         return Response({'detail': 'Se bloqueó el usuario pero no pudo enviar el sms, verificar servicio o número'})
                                     return Response({'detail':'Su usuario ha sido bloqueado'})
                                 else:
-                                    sms = 'Hola ' + user.persona.razon_social + ' Tu usuario ha sido bloqueado ya que alcanzó el limite de intentos \
-                                        para ingresar a Bia Cormacarena, desbloquealo enviando un correo a admin@admin.com'
+                                    sms = 'Usuario Cormacarena Bia bloqueado por limite de intentos, desbloquealo enviando un correo a admin@admin.com'
                                     context = {'razon_social': user.persona.razon_social}
                                     template = render_to_string(('email-blocked-user.html'), context)
                                     subject = 'Bloqueo de cuenta ' + user.persona.razon_social

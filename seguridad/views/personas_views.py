@@ -299,7 +299,7 @@ class UpdatePersonaNaturalInternoBySelf(generics.RetrieveUpdateAPIView):
                 persona_serializada.save()
                 persona = Personas.objects.get(email=email_principal)
 
-                sms = 'Hola ' + persona.primer_nombre + ' ' + persona.primer_apellido + ' te informamos que ha sido exitosa la actualización de tus datos como PERSONA NATURAL'
+                sms = 'Actualizacion exitosa de persona en Cormacarena.'
                 context = {'primer_nombre': persona.primer_nombre, 'primer_apellido': persona.primer_apellido}
                 template = render_to_string(('email-update-personanatural-interna.html'), context)
                 subject = 'Actualización de datos exitosa ' + persona.primer_nombre
@@ -353,7 +353,7 @@ class UpdatePersonaNaturalExternoBySelf(generics.RetrieveUpdateAPIView):
                 persona_serializada.save()
                 persona = Personas.objects.get(email=email_principal)
 
-                sms = 'Hola ' + persona.primer_nombre + ' ' + persona.primer_apellido + ' te informamos que ha sido exitosa la actualización de tus datos como PERSONA NATURAL'
+                sms = 'Actualizacion exitosa de persona natural en Cormacarena.'
                 context = {'primer_nombre': persona.primer_nombre, 'primer_apellido': persona.primer_apellido}
                 template = render_to_string(('email-update-personanatural-externa.html'), context)
                 subject = 'Actualización de datos exitosa ' + persona.primer_nombre
@@ -397,7 +397,7 @@ class UpdatePersonaNaturalByUserWithPermissions(generics.RetrieveUpdateAPIView):
                 persona_serializada.save()
                 persona = Personas.objects.get(email=email_principal)
 
-                sms = 'Hola ' + persona.primer_nombre + ' ' + persona.primer_apellido + ' te informamos que ha sido exitosa la actualización de tus datos como PERSONA NATURAL'
+                sms = 'Actualizacion exitosa de persona Natural en Cormacarena por administrador.'
                 context = {'primer_nombre': persona.primer_nombre, 'primer_apellido': persona.primer_apellido}
                 template= render_to_string(('email-update-personanatural-byuser-withpermissions.html'), context)
                 subject = 'Actualización de datos exitosa ' + persona.primer_nombre
@@ -444,7 +444,7 @@ class UpdatePersonaJuridicaInternoBySelf(generics.RetrieveUpdateAPIView):
                 persona_serializada.save()
                 persona = Personas.objects.get(email=email_principal)
 
-                sms = 'Hola ' + persona.razon_social + ' te informamos que ha sido exitosa la actualización de tus datos como PERSONA JURIDICA'
+                sms = 'Actualizacion exitosa de persona Juridica en Cormacarena.'
                 context = {'razon_social': persona.razon_social}
                 template = render_to_string(('email-update-personajuridica-interno.html'), context)
                 subject = 'Actualización de datos exitosa ' + persona.razon_social
@@ -454,6 +454,7 @@ class UpdatePersonaJuridicaInternoBySelf(generics.RetrieveUpdateAPIView):
                 except:
                     return Response({'detail': 'Se actualizó la persona pero no se pudo enviar el email, verificar servicio'})
                 try:
+                    
                     Util.send_sms(persona.telefono_celular_empresa, sms)
                 except:
                     return Response({'detail': 'Se actualizó la persona pero no se pudo enviar el mensaje, verificar numero o servicio'})
@@ -491,7 +492,7 @@ class UpdatePersonaJuridicaExternoBySelf(generics.RetrieveUpdateAPIView):
                 persona_serializada.save()
                 persona = Personas.objects.get(email=email_principal)
                 
-                sms = 'Hola ' + persona.razon_social + ' te informamos que ha sido exitosa la actualización de tus datos como PERSONA JURIDICA'
+                sms = 'Actualizacion exitosa de persona Juridica en Cormacarena.'
                 context = {'razon_social': persona.razon_social}
                 template = render_to_string(('email-update-personajuridica-externo.html'), context)
                 subject = 'Actualización de datos exitosa ' + persona.razon_social
@@ -533,17 +534,19 @@ class RegisterPersonaNatural(generics.CreateAPIView):
             serializer.save()
             persona = Personas.objects.get(email = email)
     
-            sms = 'Hola '+ persona.primer_nombre + ' ' + persona.primer_apellido + ' te informamos que has sido registrado como PERSONA NATURAL en el portal Bia Cormacarena \n Ahora puedes crear tu usuario, hazlo en el siguiente link' + 'url'  
+            sms = 'Registro exitoso como persona en Cormacarena. Continue aqui: ' + 'http://127.0.0.1:8000/api/personas/persona-natural/create/'  
             context = {'primer_nombre': persona.primer_nombre, 'primer_apellido':  persona.primer_apellido}
             template = render_to_string(('email-register-personanatural.html'), context)
             subject = 'Registro exitoso ' + persona.primer_nombre
             data = {'template': template, 'email_subject': subject, 'to_email': persona.email}
             try:
                 Util.send_email(data)
+                print("Email enviado")
             except:
                 return Response({'detail': 'Se guardo la persona pero no se pudo enviar el email, verificar servicio'})
             try:
                 Util.send_sms(persona.telefono_celular, sms)
+                print("SMS enviado")
             except:
                 return Response({'detail': 'Se guardo la persona pero no se pudo enviar el sms, verificar numero'})
             return Response({'status': status.HTTP_201_CREATED, 'detail': serializer.data})
@@ -565,7 +568,7 @@ class RegisterPersonaJuridica(generics.CreateAPIView):
             serializer.save() 
             persona = Personas.objects.get(email=email)
 
-            sms = 'Hola '+ persona.razon_social  + ' te informamos que has sido registrado como PERSONA JURIDICA en el portal Bia Cormacarena \n Ahora puedes crear tu usuario, hazlo en el siguiente link' + 'url'  
+            sms = 'Registro exitoso como persona Juridica en Cormacarena. Continue aqui: ' + 'http://127.0.0.1:8000/api/personas/persona-natural/create/'
             context = {'razon_social': persona.razon_social, 'nombre_comercial':  persona.nombre_comercial}
             template = render_to_string(('email-register-personajuridica.html'), context)
             subject = 'Registro exitoso ' + persona.razon_social
@@ -580,7 +583,6 @@ class RegisterPersonaJuridica(generics.CreateAPIView):
                 return Response({'detail':'Se guardo la persona pero no se pudo enviar el sms, verificar numero'})
             
             return Response({'status': status.HTTP_201_CREATED, 'detail': serializer.data})
-
 
 # Views for apoderados persona
 
@@ -629,17 +631,25 @@ class deleteSucursalEmpresa(generics.DestroyAPIView):
     
     def delete(self,request,pk):
         sucursal=SucursalesEmpresas.objects.filter(id_sucursal_empresa=pk).first()
+
         if sucursal:
+            persona_empresa=sucursal.id_persona_empresa
             sucursal.delete()
-            usuario=request.user.id_usuario
-            user = User.objects.get(id_usuario = usuario)
-            modulo = Modulos.objects.get(id_modulo = 1)
-            permiso = Permisos.objects.get(cod_permiso = 'BO')
+            persona=Personas.objects.get(id_persona=persona_empresa.id_persona)
+            usuario = request.user.id_usuario
+            dirip = Util.get_client_ip(request)
+            descripcion ={ "nombre razón social": str(persona.razon_social),"sucursal" :str(sucursal.sucursal)}
+            auditoria_data = {
+                'id_usuario': usuario,
+                'id_modulo': 1,
+                'cod_permiso': 'BO',
+                'subsistema': 'TRSV',
+                'dirip': dirip,
+                'descripcion': descripcion,
+            }
             
-            descripcion = "Sucursal:" + str(pk)+ "Sucursal:" + str(sucursal.sucursal)+ "."
-            direccion=Util.get_client_ip(request)
-            Auditorias.objects.create(id_usuario = user, id_modulo = modulo, id_cod_permiso_accion = permiso, subsistema = "TRSV", dirip=direccion, descripcion=descripcion)  
-            #headers = self.get_success_headers(sucursal.data)
+            Util.save_auditoria(auditoria_data)
+
             return Response({'detail':'la sucursal empresa fue eliminada'})
         else:
             return Response({'detail':'No existe sucursal'})
@@ -657,22 +667,24 @@ class updateSucursalEmpresa(generics.RetrieveUpdateAPIView):
             sucursal_serializer = self.serializer_class(sucursal, data=request.data)
             sucursal_serializer.is_valid(raise_exception=True)
             sucursal_serializer.save()
-            usuario=request.user.id_usuario
-            user = User.objects.get(id_usuario = usuario)
-            modulo = Modulos.objects.get(id_modulo = 1)
-            permiso = Permisos.objects.get(cod_permiso = 'AC')
             
-            valores_actualizados = ""
-            del previous_sucursal.__dict__["_state"]
-            del previous_sucursal.__dict__["_django_version"]  
-            for field, value in previous_sucursal.__dict__.items():
-                    new_value = getattr(sucursal,field)
-                    if value != new_value:
-                        valores_actualizados += field + "_anterior:" + str(value) + ";" + field + "_nuevo:" + str(new_value) + ";"
-                        
-            descripcion = "Sucursal id:" + str(sucursal.id_sucursal_empresa)+ "Sucursal:" + str(sucursal.sucursal)+ "."
-            direccion=Util.get_client_ip(request)
-            Auditorias.objects.create(id_usuario = user, id_modulo = modulo, id_cod_permiso_accion = permiso, subsistema = "TRSV", dirip=direccion, descripcion=descripcion, valores_actualizados=valores_actualizados)  
+            usuario = request.user.id_usuario
+            persona=Personas.objects.get(id_persona=request.data['id_persona_empresa'])
+            dirip = Util.get_client_ip(request)
+            descripcion ={ "nombre razón social": str(persona.razon_social),"sucursal" :str(sucursal.sucursal)}
+            valores_actualizados={'current':sucursal, 'previous':previous_sucursal}
+
+            auditoria_data = {
+                'id_usuario': usuario,
+                'id_modulo': 1,
+                'cod_permiso': 'AC',
+                'subsistema': 'TRSV',
+                'dirip': dirip,
+                'descripcion': descripcion,
+                'valores_actualizados': valores_actualizados
+            }
+            
+            Util.save_auditoria(auditoria_data)
             return Response({'detail':'la sucursal empresa actualizada'})
         else:
             return Response({'detail':'No existe sucursal'})
@@ -688,17 +700,22 @@ class registerSucursalEmpresa(generics.CreateAPIView):
 
         serializador=serializer.save()
         usuario = request.user.id_usuario
-        user = User.objects.get(id_usuario = usuario)
-        modulo = Modulos.objects.get(id_modulo = 1)
-        permiso = Permisos.objects.get(cod_permiso = 'CR')
+
+        persona=Personas.objects.get(id_persona=request.data['id_persona_empresa'])
+        dirip = Util.get_client_ip(request)
+        descripcion ={ "nombre razón social": str(persona.razon_social),"sucursal" :str(serializador.sucursal)}
+
+
+        auditoria_data = {
+            'id_usuario': usuario,
+            'id_modulo': 1,
+            'cod_permiso': 'CR',
+            'subsistema': 'TRSV',
+            'dirip': dirip,
+            'descripcion': descripcion,
+        }
         
-        currentdate = datetime.date.today()
-        formatDate = currentdate.strftime("%d/%m/%y")
-        
-        
-        descripcion = "Sucursal:" + str(serializador.pk)+  ";" + "fecha:" + formatDate + ";" + "observaciones:Registro de otra sucursal" + ";" + "NumeroSucursal:"+ str(serializador.numero_sucursal) + "Sucursal:" + str(serializador.sucursal)+"."
-        direccion=Util.get_client_ip(request)
-        Auditorias.objects.create(id_usuario = user, id_modulo = modulo, id_cod_permiso_accion = permiso, subsistema = "TRSV", dirip=direccion, descripcion=descripcion)  
+        Util.save_auditoria(auditoria_data)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
     
