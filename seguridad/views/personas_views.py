@@ -273,7 +273,7 @@ class deletePersona(generics.DestroyAPIView):
 class UpdatePersonaNaturalInternoBySelf(generics.RetrieveUpdateAPIView):
     http_method_names = ['patch']
     serializer_class = PersonaNaturalInternoUpdateSerializer
-    permission_classes = [IsAuthenticated, PermisoActualizarInterno]
+    permission_classes = [IsAuthenticated]
     queryset = Personas.objects.all()
     
     def patch(self, request):
@@ -326,7 +326,7 @@ class UpdatePersonaNaturalInternoBySelf(generics.RetrieveUpdateAPIView):
 class UpdatePersonaNaturalExternoBySelf(generics.RetrieveUpdateAPIView):
     http_method_names = ['patch']
     serializer_class = PersonaNaturalExternoUpdateSerializer
-    permission_classes = [IsAuthenticated, PermisoActualizarExterno]
+    permission_classes = [IsAuthenticated]
     queryset = Personas.objects.all()
     
     def patch(self, request):
@@ -418,7 +418,7 @@ class UpdatePersonaNaturalByUserWithPermissions(generics.RetrieveUpdateAPIView):
 class UpdatePersonaJuridicaInternoBySelf(generics.RetrieveUpdateAPIView):
     http_method_names = ['patch']
     serializer_class = PersonaJuridicaInternaUpdateSerializer
-    permission_classes = [IsAuthenticated, PermisoActualizarInterno]
+    permission_classes = [IsAuthenticated]
     queryset = Personas.objects.all()
     
     def patch(self, request):
@@ -466,7 +466,7 @@ class UpdatePersonaJuridicaInternoBySelf(generics.RetrieveUpdateAPIView):
 class UpdatePersonaJuridicaExternoBySelf(generics.RetrieveUpdateAPIView):
     http_method_names = ['patch']
     serializer_class = PersonaJuridicaExternaUpdateSerializer
-    permission_classes = [IsAuthenticated, PermisoActualizarExterno]
+    permission_classes = [IsAuthenticated]
     queryset = Personas.objects.all()
     
     def patch(self, request):
